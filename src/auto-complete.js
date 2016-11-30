@@ -1,5 +1,4 @@
 'use strict';
-
 /**
  * @ngdoc directive
  * @name autoComplete
@@ -28,7 +27,7 @@
  * @param {boolean=} [selectFirstMatch=true] Flag indicating that the first match will be automatically selected once
  *    the suggestion list is shown.
  */
-tagsInput.directive('autoComplete', function($document, $timeout, $sce, $q, tagsInputConfig, tiUtil) {
+tagsInput.directive('autoComplete', ["$document", "$timeout", "$sce", "$q", "tagsInputConfig", "tiUtil", function($document, $timeout, $sce, $q, tagsInputConfig, tiUtil) {
     function SuggestionList(loadFn, options, events) {
         var self = {}, getDifference, lastPromise, getTagId;
 
@@ -37,6 +36,7 @@ tagsInput.directive('autoComplete', function($document, $timeout, $sce, $q, tags
         };
 
         getDifference = function(array1, array2) {
+            if (options.tagsInput.allowDuplicates) return array1;
             return array1.filter(function(item) {
                 return !tiUtil.findInObjectArray(array2, item, getTagId(), function(a, b) {
                     if (options.tagsInput.replaceSpacesWithDashes) {
@@ -134,7 +134,7 @@ tagsInput.directive('autoComplete', function($document, $timeout, $sce, $q, tags
         require: '^tagsInput',
         scope: { source: '&' },
         templateUrl: 'ngTagsInput/auto-complete.html',
-        controller: function($scope, $element, $attrs) {
+        controller: ["$scope", "$element", "$attrs", function($scope, $element, $attrs) {
             $scope.events = tiUtil.simplePubSub();
 
             tagsInputConfig.load('autoComplete', $scope, $attrs, {
@@ -147,7 +147,8 @@ tagsInput.directive('autoComplete', function($document, $timeout, $sce, $q, tags
                 loadOnEmpty: [Boolean, false],
                 loadOnFocus: [Boolean, false],
                 selectFirstMatch: [Boolean, true],
-                displayProperty: [String, '']
+                displayProperty: [String, ''],
+                allowDuplicates: [Boolean, false]
             });
 
             $scope.suggestionList = new SuggestionList($scope.source, $scope.options, $scope.events);
@@ -162,7 +163,7 @@ tagsInput.directive('autoComplete', function($document, $timeout, $sce, $q, tags
                     }
                 };
             };
-        },
+        }],
         link: function(scope, element, attrs, tagsInputCtrl) {
             var hotkeys = [KEYS.enter, KEYS.tab, KEYS.escape, KEYS.up, KEYS.down],
                 suggestionList = scope.suggestionList,
@@ -262,4 +263,5 @@ tagsInput.directive('autoComplete', function($document, $timeout, $sce, $q, tags
             });
         }
     };
-});
+}]);
+

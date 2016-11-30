@@ -1,5 +1,4 @@
 'use strict';
-
 /**
  * @ngdoc directive
  * @name tagsInput
@@ -46,8 +45,9 @@
  * @param {expression=} [onTagRemoved=NA] Expression to evaluate upon removing an existing tag. The removed tag is
  *    available as $tag.
  * @param {expression=} [onTagClicked=NA] Expression to evaluate upon clicking an existing tag. The clicked tag is available as $tag.
+ * @param {boolean=} [allowDuplicates=false] Flag allow duplicate tags
  */
-tagsInput.directive('tagsInput', function($timeout, $document, $window, tagsInputConfig, tiUtil) {
+tagsInput.directive('tagsInput', ["$timeout", "$document", "$window", "tagsInputConfig", "tiUtil", function($timeout, $document, $window, tagsInputConfig, tiUtil) {
     function TagList(options, events, onTagAdding, onTagRemoving) {
         var self = {}, getTagText, setTagText, tagIsValid;
 
@@ -66,7 +66,8 @@ tagsInput.directive('tagsInput', function($timeout, $document, $window, tagsInpu
                    tagText.length >= options.minLength &&
                    tagText.length <= options.maxLength &&
                    options.allowedTagsPattern.test(tagText) &&
-                   !tiUtil.findInObjectArray(self.items, tag, options.keyProperty || options.displayProperty) &&
+                  (!tiUtil.findInObjectArray(self.items, tag, options.keyProperty || options.displayProperty) ||
+                   options.allowDuplicates) &&
                    onTagAdding({ $tag: tag });
         };
 
@@ -163,7 +164,7 @@ tagsInput.directive('tagsInput', function($timeout, $document, $window, tagsInpu
         replace: false,
         transclude: true,
         templateUrl: 'ngTagsInput/tags-input.html',
-        controller: function($scope, $attrs, $element) {
+        controller: ["$scope", "$attrs", "$element", function($scope, $attrs, $element) {
             $scope.events = tiUtil.simplePubSub();
 
             tagsInputConfig.load('tagsInput', $scope, $attrs, {
@@ -189,7 +190,8 @@ tagsInput.directive('tagsInput', function($timeout, $document, $window, tagsInpu
                 keyProperty: [String, ''],
                 allowLeftoverText: [Boolean, false],
                 addFromAutocompleteOnly: [Boolean, false],
-                spellcheck: [Boolean, true]
+                spellcheck: [Boolean, true],
+                allowDuplicates: [Boolean, false]
             });
 
             $scope.tagList = new TagList($scope.options, $scope.events,
@@ -235,7 +237,7 @@ tagsInput.directive('tagsInput', function($timeout, $document, $window, tagsInpu
                     }
                 };
             };
-        },
+        }],
         link: function(scope, element, attrs, ngModelCtrl) {
             var hotkeys = [KEYS.enter, KEYS.comma, KEYS.space, KEYS.backspace, KEYS.delete, KEYS.left, KEYS.right],
                 tagList = scope.tagList,
@@ -284,7 +286,6 @@ tagsInput.directive('tagsInput', function($timeout, $document, $window, tagsInpu
 
             scope.$watch('tags.length', function() {
                 setElementValidity();
-
                 // ngModelController won't trigger validators when the model changes (because it's an array),
                 // so we need to do it ourselves. Unfortunately this won't trigger any registered formatter.
                 ngModelCtrl.$validate();
@@ -442,4 +443,4 @@ tagsInput.directive('tagsInput', function($timeout, $document, $window, tagsInpu
                 });
         }
     };
-});
+}]);
