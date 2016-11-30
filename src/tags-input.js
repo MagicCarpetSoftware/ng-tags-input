@@ -47,7 +47,7 @@
  * @param {expression=} [onTagClicked=NA] Expression to evaluate upon clicking an existing tag. The clicked tag is available as $tag.
  * @param {boolean=} [allowDuplicates=false] Flag allow duplicate tags
  */
-tagsInput.directive('tagsInput', ["$timeout", "$document", "$window", "tagsInputConfig", "tiUtil", function($timeout, $document, $window, tagsInputConfig, tiUtil) {
+tagsInput.directive('tagsInput', ['$timeout', '$document', '$window', 'tagsInputConfig', 'tiUtil', function($timeout, $document, $window, tagsInputConfig, tiUtil) {
     function TagList(options, events, onTagAdding, onTagRemoving) {
         var self = {}, getTagText, setTagText, tagIsValid;
 
@@ -164,7 +164,7 @@ tagsInput.directive('tagsInput', ["$timeout", "$document", "$window", "tagsInput
         replace: false,
         transclude: true,
         templateUrl: 'ngTagsInput/tags-input.html',
-        controller: ["$scope", "$attrs", "$element", function($scope, $attrs, $element) {
+        controller: ['$scope', '$attrs', '$element', function($scope, $attrs, $element) {
             $scope.events = tiUtil.simplePubSub();
 
             tagsInputConfig.load('tagsInput', $scope, $attrs, {

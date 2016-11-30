@@ -27,7 +27,7 @@
  * @param {boolean=} [selectFirstMatch=true] Flag indicating that the first match will be automatically selected once
  *    the suggestion list is shown.
  */
-tagsInput.directive('autoComplete', ["$document", "$timeout", "$sce", "$q", "tagsInputConfig", "tiUtil", function($document, $timeout, $sce, $q, tagsInputConfig, tiUtil) {
+tagsInput.directive('autoComplete', ['$document', '$timeout', '$sce', '$q', 'tagsInputConfig', 'tiUtil', function($document, $timeout, $sce, $q, tagsInputConfig, tiUtil) {
     function SuggestionList(loadFn, options, events) {
         var self = {}, getDifference, lastPromise, getTagId;
 
@@ -36,7 +36,7 @@ tagsInput.directive('autoComplete', ["$document", "$timeout", "$sce", "$q", "tag
         };
 
         getDifference = function(array1, array2) {
-            if (options.tagsInput.allowDuplicates) return array1;
+            if (options.tagsInput.allowDuplicates) { return array1; }
             return array1.filter(function(item) {
                 return !tiUtil.findInObjectArray(array2, item, getTagId(), function(a, b) {
                     if (options.tagsInput.replaceSpacesWithDashes) {
@@ -134,7 +134,7 @@ tagsInput.directive('autoComplete', ["$document", "$timeout", "$sce", "$q", "tag
         require: '^tagsInput',
         scope: { source: '&' },
         templateUrl: 'ngTagsInput/auto-complete.html',
-        controller: ["$scope", "$element", "$attrs", function($scope, $element, $attrs) {
+        controller: ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
             $scope.events = tiUtil.simplePubSub();
 
             tagsInputConfig.load('autoComplete', $scope, $attrs, {

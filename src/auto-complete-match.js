@@ -8,7 +8,7 @@
  * @description
  * Represents an autocomplete match. Used internally by the autoComplete directive.
  */
-tagsInput.directive('tiAutocompleteMatch', ["$sce", "tiUtil", function($sce, tiUtil) {
+tagsInput.directive('tiAutocompleteMatch', ['$sce', 'tiUtil', function($sce, tiUtil) {
     return {
         restrict: 'E',
         require: '^autoComplete',
